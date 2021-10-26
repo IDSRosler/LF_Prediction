@@ -18,12 +18,12 @@ blockSizeR = 15 * 15; % Linhas no bloco (15 MIs de 15 pixels cada)
 blockSizeC = 15 * 15; % Colunas no bloco (15 MIs de 15 pixels cada)
 
 wholeBlockRows = floor(rows / blockSizeR);
-blockVectorR = [blockSizeR * ones(1, wholeBlockRows), rem(rows, blockSizeR)];
+blockR = [blockSizeR * ones(1, wholeBlockRows), rem(rows, blockSizeR)];
  
 wholeBlockCols = floor(columns / blockSizeC);
-blockVectorC = [blockSizeC * ones(1, wholeBlockCols), rem(columns, blockSizeC)];
+blockC = [blockSizeC * ones(1, wholeBlockCols), rem(columns, blockSizeC)];
 
-ca = mat2cell(lenslet, blockVectorR, blockVectorC, c); % Divide o LF em blocos 15x15
+ca = mat2cell(lenslet, blockR, blockC, c); % Divide o LF em blocos 15x15
 
 blockA = ca{1,2};
 blockAR = ca{1,3};

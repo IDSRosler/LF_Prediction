@@ -438,10 +438,5 @@ classdef LightField < handle
                 
     end
     
-    
-    %% Static Method
-    methods (Static)        
-              
-    end
 end
 
