@@ -4,7 +4,7 @@ function PathSetup()
     disp('Setting LFToolbox path');
     cd LFToolbox-master
     LFMatlabPathSetup
-    cd ../..
+    cd ..
 
     %% Set Project Pathes
     disp('Setting pathes of this project');

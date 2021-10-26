@@ -4,56 +4,44 @@ L = LightField(lf_path);
 
 %% Light Field Prediction
 clc; close all;
-disp(' ');
-disp('Showing the center sub-aperture image (SAI/View):');
-disp('>> imshow(L.getCenterSai());');
-imshow(L.getCenterSai());
-disp('...press enter to continue...');
-pause;
-close all;
 
-disp(' ');
-disp('Converting the LightField to YCbCr color space:');
-disp('>> L.convert2ycbcr;');
-L.convertToYCbCr;
+% disp('Exibindo LF no seu formaro Lenslet: ');
+lenslet = L.getLensletFormat;
+% imshow(lenslet);
+% disp('...press enter to continue...');
+% pause;
+% close all;
 
-disp(' ');
-disp('Showing the center sub-aperture image (SAI/View):');
-disp('>> imshow(L.getCenterSai());');
-imshow(L.getCenterSai());
-pause;
-close all;
+[rows, columns, c] = size(lenslet);
 
-disp(' ');
-disp('Showing the center sub-aperture image (SAI/View) in RGB space without converting it back:');
-disp('>> imshow(L.getCenterSai(''rgb''));');
-imshow(L.getCenterSai('rgb'));
-disp('...press enter to continue...');
-pause;
-close all;
+blockSizeR = 15 * 15; % Linhas no bloco (15 MIs de 15 pixels cada)
+blockSizeC = 15 * 15; % Colunas no bloco (15 MIs de 15 pixels cada)
 
-L.convertToRGB;
-disp(' ');
-disp('Showing the micro image at spacial position x=500 and y=180:');
-disp('>> imshow(L.getMI(500,180));');
-imshow(L.getMicroImageXY(500,180));
-disp('...press enter to continue...');
-pause;
-figure;
+wholeBlockRows = floor(rows / blockSizeR);
+blockVectorR = [blockSizeR * ones(1, wholeBlockRows), rem(rows, blockSizeR)];
+ 
+wholeBlockCols = floor(columns / blockSizeC);
+blockVectorC = [blockSizeC * ones(1, wholeBlockCols), rem(columns, blockSizeC)];
 
-disp(' ');
-disp('To identify the position (500,180) at the LightField');
-disp('>> imshow(L.getCenterSaiMarked(500,180));');
-imshow(L.getCenterSaiMarked(500,180));
-disp('...press enter to continue...');
-pause;
-close all;
+ca = mat2cell(lenslet, blockVectorR, blockVectorC, c); % Divide o LF em blocos 15x15
 
-disp(' ');
-disp('It is also possible to see the LightField as a 2D matrix of micro images:');
-disp('>> imshow(L.get2dLf();');
-imshow(L.getMatrixMicroImage());
-disp('In order to enhance visualization of micro images, zooming in is recommended.');
-disp('...press enter to continue...');
-pause;
-close all;
+blockA = ca{1,2};
+blockAR = ca{1,3};
+blockL = ca{2,1};
+
+block = zeros(15*15, 15*15);
+
+figure('NumberTitle','on');
+figure(1); 
+subplot(2,3,2); imshow(blockA); title('Above');
+subplot(2,3,3); imshow(blockAR); title('Above-Rigth');
+subplot(2,3,4); imshow(blockL); title('Left');
+subplot(2,3,5); imshow(block); title('Block to be predict');
+
+figure('NumberTitle','on');
+figure(2);
+imshow(blockA(end-15:end,:,:)); title('Above Last Row');
+
+figure('NumberTitle','on');
+figure(3);
+imshow(blockL(:,end-15:end,:)); title('Left Last Column');

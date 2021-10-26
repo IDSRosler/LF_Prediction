@@ -253,7 +253,7 @@ classdef LightField < handle
         end
         
         %Returns an Image that groups Micro-Images side-by-side. 2D representation of the Light Field
-        function I = getMatrixMicroImage(obj)
+        function I = getLensletFormat(obj)
             I = obj.castTypeLightField(zeros(obj.viewHeight*obj.numVerViews,obj.viewWidth*obj.numHorViews,3));            
             for i=1:obj.numVerViews
                for j=1:obj.numHorViews
