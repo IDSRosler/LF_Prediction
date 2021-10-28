@@ -1,4 +1,4 @@
-classdef Prediction
+classdef Prediction < handle
     %% Private Attributes  
     properties
         predictedLF; % Predicted Light Field
@@ -20,7 +20,17 @@ classdef Prediction
             wholeBlockCols = floor(columns / blockSizeC);
             blockC = [blockSizeC * ones(1, wholeBlockCols), rem(columns, blockSizeC)];
 
-            obj.predictedLFC = mat2cell(obj.predictedLF, blockR, blockC, c); % Divide o LF em blocos 15x15
+            obj.predictedLFC = mat2cell(obj.predictedLF, blockR, blockC, color); % Divide o LF em blocos 15x15
+        end
+        
+        % Predict block
+        function PredictBlock(obj, block, i, j)
+            obj.predictedLFC{i,j} = block;
+        end
+        
+        % Get predicted Light Field
+        function LF = GetPredictedLF(obj)
+           LF = cell2mat(obj.predictedLFC);
         end
     end
     
@@ -34,6 +44,7 @@ classdef Prediction
                 A = -1;
             end
         end
+        
         % Get above-rigth reference
         function AR = AboveRightReference(obj, i, j)
             if i-1 > 0 && j+1 < size(obj.predictedLFC,2)
@@ -42,6 +53,7 @@ classdef Prediction
                 AR = -1;
             end
         end
+        
         % Get left reference
         function L = LeftReference(obj, i, j)
             if j-1 > 0

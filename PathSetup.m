@@ -14,5 +14,6 @@ function PathSetup()
 
     addpath(fullfile(path,'Classes'));
     addpath(fullfile(path,'Scripts'));
+    addpath(fullfile(path,'Metrics'));
 end
 

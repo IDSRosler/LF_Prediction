@@ -5,14 +5,10 @@ L = LightField(lf_path);
 %% Light Field Prediction
 clc; close all;
 
-% disp('Exibindo LF no seu formaro Lenslet: ');
 lenslet = L.getLensletFormat;
-% imshow(lenslet);
-% disp('...press enter to continue...');
-% pause;
-% close all;
-
 [rows, columns, c] = size(lenslet);
+
+prediction = Prediction(rows, columns, c);
 
 blockSizeR = 15 * 15; % Linhas no bloco (15 MIs de 15 pixels cada)
 blockSizeC = 15 * 15; % Colunas no bloco (15 MIs de 15 pixels cada)
@@ -24,24 +20,28 @@ wholeBlockCols = floor(columns / blockSizeC);
 blockC = [blockSizeC * ones(1, wholeBlockCols), rem(columns, blockSizeC)];
 
 ca = mat2cell(lenslet, blockR, blockC, c); % Divide o LF em blocos 15x15
+[r, c] = size(ca);
 
-blockA = ca{1,2};
-blockAR = ca{1,3};
-blockL = ca{2,1};
+for i = 1:r
+    for j = 1:c
+        block = ca{i,j};
+        prediction.PredictBlock(block, i, j);
+        disp(strcat('block = {x: ', int2str(i), ', y: ', int2str(j),'}'));
+    end
+end
 
-block = zeros(15*15, 15*15);
+predictedLF = prediction.GetPredictedLF();
 
-figure('NumberTitle','on');
-figure(1); 
-subplot(2,3,2); imshow(blockA); title('Above');
-subplot(2,3,3); imshow(blockAR); title('Above-Rigth');
-subplot(2,3,4); imshow(blockL); title('Left');
-subplot(2,3,5); imshow(block); title('Block to be predict');
+[y_psnr, u_psnr, v_psnr, yuv_psnr] = PSNR(lenslet, predictedLF, L.bitDepth);
 
-figure('NumberTitle','on');
-figure(2);
-imshow(blockA(end-15:end,:,:)); title('Above Last Row');
+disp(' ');
+disp('******************************');
+disp('Métricas de qualidade');
+disp('******************************');
+disp(strcat('Y_PSNR: ', num2str(y_psnr)));
+disp(strcat('U_PSNR: ', num2str(u_psnr)));
+disp(strcat('V_PSNR: ', num2str(v_psnr)));
+disp(strcat('YUV_PSNR: ', num2str(yuv_psnr)));
 
-figure('NumberTitle','on');
-figure(3);
-imshow(blockL(:,end-15:end,:)); title('Left Last Column');
+% figure(1); imshow(lenslet); title('Original LF');
+% figure(2); imshow(predictedLF); title('Predicted LF');
