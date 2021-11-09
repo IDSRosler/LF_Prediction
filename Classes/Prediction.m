@@ -22,7 +22,7 @@ classdef Prediction < handle
         end
         
         % Predict block
-        function [blockMSE, predMode] = PredictBlock(obj, block, i, j)
+        function [blockMSE, predMode] = PredictBlock(obj, block, i, j, mode)
             mseBlock = 99999999999999999999;
             if i == 1 || j == 1
                 blockP = block; 
@@ -35,7 +35,17 @@ classdef Prediction < handle
                 refA = obj.AboveReference(i,j);
                 refL = obj.LeftReference(i,j);
                 
-                for m = 0:2
+                if strcmp(mode, 'v')
+                    s = 0:0;
+                elseif strcmp(mode, 'h')
+                    s = 1:1;
+                elseif strcmp(mode, 'dc')
+                    s = 2:2;
+                else
+                    s = 0:2;
+                end
+                
+                for m = s
                    switch m
                        case 0
                            if refA ~= -1

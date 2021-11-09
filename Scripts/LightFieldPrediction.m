@@ -1,6 +1,7 @@
 %% Criar um objeto de um Light Field 5D LF(s,t,x,y,c)
-lf_path = '/home/idsrosler/Documentos/git/CTC_Datasets/Lenslets/Bikes/Bikes/';
-L = LightField(lf_path);
+%lf_path = '/home/idsrosler/Documentos/git/CTC_Datasets/Lenslets/Bikes/Bikes/';
+%L = LightField(lf_path); % Buscar arquivos ppm pelo caminho 
+L = LightField(); % Selecionar diretório dos arquivos ppm
 
 %% Light Field Prediction
 clc; close all;
@@ -25,7 +26,7 @@ ca = mat2cell(lenslet, blockR, blockC, c); % Divide o LF em blocos 15x15
 for i = 1:r
     for j = 1:c
         block = ca{i,j};
-        [blockMSE, mode] = prediction.PredictBlock(block, i, j);
+        [blockMSE, mode] = prediction.PredictBlock(block, i, j, 'all'); % (v-vertical| h-horizontal| dc-DC| all-Todos)
         disp(strcat('Block: {x: ', int2str(i), ', y: ', int2str(j),'} | MSE: ', num2str(blockMSE), ' | mode: ', int2str(mode)));
     end
 end
@@ -45,3 +46,5 @@ disp(strcat('YUV_PSNR: ', num2str(yuv_psnr)));
 
 figure(1); imshow(lenslet); title('Original LF');
 figure(2); imshow(predictedLF); title('Predicted LF');
+
+clear;
